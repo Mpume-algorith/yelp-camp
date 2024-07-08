@@ -7,6 +7,7 @@ const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
+const Review = require('./models/review');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -81,9 +82,20 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect('/campgrounds');
 }));
 
-app.post('/campgrounds/:id/reviews',catchAsync(async (req, res) =>{
-    res.send('Page Works');
+app.post('/campgrounds/:id/reviews', catchAsync(async (req, res) =>{
+    //you want to insert this data in the DB where id == one from req.params.id
+    //Since the ID is Campground's Id, we need to somehow link to the child collection/table
+    //Is this where we use populate()
+    //console.log(req.body.review);
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    //const body = req.body;
+    res.redirect(`/campgrounds/${campground._id}`);
 }));
+
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404))
 })
