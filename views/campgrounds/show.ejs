@@ -37,5 +37,22 @@
             </div>
             <button class="btn btn-success">Submit</button>
         </form>
+        <h3>Reviews</h3>
+        <ul>
+            <% for( let review of campground.reviews ) { %>
+                <div class="card mb-3">
+                    
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text-muted"><%= review.rating%></li>
+                    </ul>
+                    <div class="card-body">
+                        <p class="card-text"><%= review.description%></p>
+                    </div>
+                    <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                          <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            <% } %>
+        </ul>
     </div>
 </div>
