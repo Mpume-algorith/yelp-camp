@@ -11,6 +11,9 @@ const Review = require('./models/review');
 const campgrounds = ('./routes/campgrounds')
 const campgroundRoutes = require('./routes/campgrounds')
 const reviewRoutes = require('./routes/reviews')
+const session = require('express-session')
+const cookieParser = require('cookie-parser')
+const flash = require('connect-flash')
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -32,19 +35,37 @@ app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {secure: false}
+}))
+//flash middleware
+app.use(flash());
 
-/*const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-}*/
+//setting flash message middleware
+app.use((req, res, next) =>{
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error')
+    //console.log(res.locals.success);
+    next();
+})
+
+//Routes decoupling
 app.use('/', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes)
+app.use(express.static(path.join(__dirname, 'public')))
 
+//app.use(cookieParser()) 
+//express session middleware
+
+
+
+
+
+
+    
 app.get('/', (req, res) => {
     res.render('home')
 });
