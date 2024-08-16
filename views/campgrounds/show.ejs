@@ -2,27 +2,40 @@
 
 <div class="row">
     <div class="col-6 offset-3">
-        <p> <%= success %> </p>
+        <% if (success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <p> <%= success %> </p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <% } %>
+         
         <div class="card mb-3">
             <img src="<%= campground.image%>" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title"><%= campground.title%></h5>
                 <p class="card-text"><%= campground.description%></p>
+                <p class="card-text">Created by: <%= campground.author ? campground.author.username : 'Unknown' %> </p>
+
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-muted"><%= campground.location%></li>
                 <li class="list-group-item">$<%= campground.price%>/night</li>
             </ul>
+            <% if (currentUser && currentUser._id.equals(campground.author._id)) {%>
             <div class="card-body">
                 <a class="card-link btn btn-info" href="/campgrounds/<%=campground._id%>/edit">Edit</a>
                 <form class="d-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </div>
+            <% } %>
             <div class="card-footer text-muted">
                 2 days ago
             </div>
         </div>
+        <% if (currentUser) { %>
         <h3>Leave a Review</h3>
         <form action="/campgrounds/<%=campground._id%>/reviews" method="POST" class="mb-3 validated-form" novalidate>
             <div class="mb-3">
@@ -38,22 +51,35 @@
             </div>
             <button class="btn btn-success">Submit</button>
         </form>
+        <% } %>
         <h3>Reviews</h3>
         <ul>
             <% for( let review of campground.reviews ) { %>
                 <div class="card mb-3">
-                    
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text"><%= review.author ? review.author.username : 'Anonymous'%></li>
+                    </ul>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item text-muted"><%= review.rating%></li>
                     </ul>
                     <div class="card-body">
                         <p class="card-text"><%= review.description%></p>
                     </div>
+                    <% if (currentUser && review.author.equals(currentUser._id) ) {%>
                     <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
                           <button class="btn btn-danger">Delete</button>
                     </form>
+                    <% } %>
                 </div>
             <% } %>
         </ul>
     </div>
+    
 </div>
+<script >
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+</script>

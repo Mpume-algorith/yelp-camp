@@ -12,8 +12,12 @@ const campgrounds = ('./routes/campgrounds')
 const campgroundRoutes = require('./routes/campgrounds')
 const reviewRoutes = require('./routes/reviews')
 const session = require('express-session')
-const cookieParser = require('cookie-parser')
-const flash = require('connect-flash')
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
+const passport = require('passport');
+const localStrategy= require('passport-local');
+const User = require('./models/user.js');
+const userRoutes = require('./routes/users.js')
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -35,6 +39,7 @@ app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(session({
     secret: 'secret',
     resave: false,
@@ -43,9 +48,17 @@ app.use(session({
 }))
 //flash middleware
 app.use(flash());
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new localStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser()) 
 
 //setting flash message middleware
 app.use((req, res, next) =>{
+    console.log(req.session)
+    res.locals.currentUser = req.user;
+    console.log(res.locals.currentUser);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error')
     //console.log(res.locals.success);
@@ -53,17 +66,12 @@ app.use((req, res, next) =>{
 })
 
 //Routes decoupling
+app.use('/', userRoutes);
 app.use('/', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes)
-app.use(express.static(path.join(__dirname, 'public')))
 
 //app.use(cookieParser()) 
 //express session middleware
-
-
-
-
-
 
     
 app.get('/', (req, res) => {
