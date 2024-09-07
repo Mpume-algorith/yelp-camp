@@ -7,12 +7,27 @@
 <div class="row">
     <div class="col-6 offset-3">        
         <div class="card mb-3">
-            <img src="<%= campground.image%>" class="card-img-top" alt="...">
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">             
+                <div class="carousel-inner">
+                    <% for (let [index, img] of campground.images.entries()) {%>
+                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                        <img class="d-block w-100" src="<%= img.url %>" alt="">
+                    </div>
+                    <% } %>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
             <div class="card-body">
                 <h5 class="card-title"><%= campground.title%></h5>
                 <p class="card-text"><%= campground.description%></p>
                 <p class="card-text">Created by: <%= campground.author ? campground.author.username : 'Unknown' %> </p>
-
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-muted"><%= campground.location%></li>
