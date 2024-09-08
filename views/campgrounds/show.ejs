@@ -11,7 +11,7 @@
                 <div class="carousel-inner">
                     <% for (let [index, img] of campground.images.entries()) {%>
                     <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                        <img class="d-block w-100" src="<%= img.url %>" alt="">
+                        <img class="d-block w-100" src="<%= img.thumbnail %>" alt="">
                     </div>
                     <% } %>
                 </div>

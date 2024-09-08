@@ -48,12 +48,12 @@
             </div>
             <div class="mb-3">
                 <% for (let [index, img] of campground.images.entries()) {%>
-                    <img src="<%= img.url %>" class="img-thumbnail" alt="">
+                    <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="">
                     <div class="form-check-inline">
                         <input type="checkbox" id="imgage-<%= index %>" name="deleteImages[]" value="<%= img.filename %>">
                         <label for="imgage-<%= index %>">Delete?</label>
                     </div>
-                <% } %>
+                <% } %> 
             </div>
             <div class="mb-3">
                 <button class="btn btn-info">Update Campground</button>
